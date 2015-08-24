@@ -2,33 +2,58 @@ var submitForm = function()
 {
 	var input = document.getElementById("inputtext").value;
 	var result = parse(input);
-	document.getElementById("outputtext").innerHTML = result;
+	if (result != "")
+		document.getElementById("outputtext").innerHTML = result;
 };
 
 function parse(input)
 {
-	var strings = input.split("&");
+	var strings = input.replace(/\n|\r/g, "").split("&");
 	var result = "";
 	if (strings[0] != "")
 		result = "{text:\"" + strings[0] + "\"},";
+	var carryover = "";
 	for (var i = 1; i < strings.length; i++)
 	{
 		var curr = strings[i];
-		var out = "{text:\"" + curr.substr(1, curr.length - 1) + "\"";
-		var color = findColor(curr.charAt(0));
-		if (color == "")
+		if (curr == "")
 		{
-			logMessage("Invalid input! '" + curr.charAt(0) + "' is not a valid format code.")
+			logMessage("You derp, you're not allowed to have two &'s in a row!");
 			return "";
 		}
-		out += ",color:" + color;
-		out += "},";
-		result += out;
+		
+		var text = curr.substr(1, curr.length - 1);
+		var chr = curr.charAt(0);
+		if (chr.match(/[0-9a-f]/))
+			out = ",color:" + findColor(chr);
+		else
+		{
+			var rtn = findFormat(chr);
+			if (rtn == "")
+			{
+				logMessage("Invalid input! '" + curr.charAt(0) + "' is not a valid format code.")
+				return "";
+			}
+			out = "," + rtn + ":true";
+		}
+		
+		
+		
+		if (text == "") //This means there is only format code, so needs to carry over to next one
+		{
+			carryover += out;
+		}
+		else
+		{
+			result += "{text:\"" + text + "\"" + carryover + out + "},";
+			carryover = "";
+		}
 	}
 	result = "[" + result.replace(/,$/, "") + "]";
 	return result;
 }
 //[{text:"Blargh ",color:dark_purple},{text:"zzz",color:dark_red}]
+//{text:"Hello",underlined:true,strikethrough:true,obfuscated:true}
 //&8[&bAnnouncer&8]&7=&8[&6MrLobaLoba&8] &6Booooombastic!
 
 function findColor(c)
@@ -55,8 +80,23 @@ function findColor(c)
 	}
 }
 
+function findFormat(c)
+{
+	switch (c)
+	{
+		case 'k': return "obfuscated";
+		case 'l': return "bold";
+		case 'm': return "strikethrough";
+		case 'n': return "underlined";
+		case 'o': return "italic"; // IDK WHICH ONE THIS IS
+		default: return "";
+	}
+}
+
 function logMessage(msg)
 {
 	document.getElementById("message").innerHTML = msg;
 	document.getElementById("message").style.color = "#FF4444";
 }
+
+//TODO: preview maybe?

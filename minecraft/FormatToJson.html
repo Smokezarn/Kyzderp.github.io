@@ -7,18 +7,18 @@
 		<h3>Text Format to JSON Text Parser</h3>
 		<p>
 			Input text like how you would normally type it in chat, click Parse and it will generate JSON text that you can use, for example in a command block with /tellraw @a [{text:"Hi!",color:dark_green}]<br/>
-			Currently does not yet support special formats (e.g. bold, strikethrough, underline, obfuscated, italic).
+			Does not support the "reset" format (&r), and changing color immediately after changing special format still keeps the format (i.e. &a&lHi and &l&aHi will show the same bold green).
 		</p>
 		<p>
 			Input text:<br/>
-			<textarea id="inputtext" rows="10" cols="200">&8[&bAnnouncer&8]&7=&8[&6MrLobaLoba&8] &6Booooombastic!</textarea><br/>
+			<textarea id="inputtext" rows="10" cols="200" autofocus>&8[&bAnnouncer&8]&7=&8[&6MrLobaLoba&8] &6Booooombastic!</textarea><br/>
 			<input id="submit" type="button" value="Parse" onClick="submitForm()"></input>
 		</p>
+		<p id="message"><br/></p>
 		<p>
 			Result:<br/>
 			<textarea id="outputtext" rows="10" cols="200"></textarea>
 		</p>
-		<p id="message"></p>
 	</body>
 	<script type="text/javascript">
 			document.body.style.font = "14px sans-serif";
