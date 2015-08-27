@@ -4,7 +4,7 @@ var dragOffX;
 var dragOffY;
 var currentThing;
 
-var messages = ["ow", "stahp", "such bounce", "much wow", "balls", "oi", "ouch", "stop it", "omg", "u w0t", "m8 stahp"];
+var messages = ["ow", "stahp", "such bounce", "much wow", "balls", "oi", "ouch", "stop it", "omg", "u w0t", "m8 stahp", "wot", "wait", "pls", "u nub", "nub", "crab"];
 
 var mouseX = 0;
 var mouseY = 0;
@@ -16,6 +16,7 @@ var mouseTime2 = 0;
 var INTERVAL = 30;
 var MULTIPLIER = 500;
 var FRICTION = 5;
+var CHAOS = 1000;
 
 var main = function()
 {
@@ -99,7 +100,7 @@ var main = function()
 		update();
 	});
 	
-	setInterval(function() { gravityCheck(); }, INTERVAL);
+	setInterval(function() { collisionCheck(); }, INTERVAL);
 }
 
 function update()
@@ -115,7 +116,7 @@ function update()
 	}
 }
 
-function gravityCheck()
+function collisionCheck()
 {
 	for (var i in things)
 	{
@@ -234,4 +235,17 @@ function getContext()
 		return ctx;
 	}
 	return "";
+}
+
+
+var chaos = function()
+{
+	console.log("chaos");
+	var hrng = [-1, 1];
+	for (var i in things)
+	{
+		var thing = things[i];
+		thing.vX += hrng[Math.floor(Math.random() * 2)]*Math.floor(Math.random() * CHAOS + CHAOS);
+		thing.vY += hrng[Math.floor(Math.random() * 2)]*Math.floor(Math.random() * CHAOS + CHAOS);
+	}
 }
