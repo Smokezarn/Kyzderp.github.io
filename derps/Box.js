@@ -21,6 +21,9 @@ var CHAOS = 1000;
 
 var FLOORLEVEL;
 
+var lastThing;
+var gravityEnabled = true;
+
 var main = function()
 {
 	console.log("Entered main.");
@@ -136,7 +139,8 @@ var main = function()
 		color += Math.floor((Math.random() * 200 + 55)) + ",";
 		color += Math.floor((Math.random() * 200 + 55)) + ",0.8)";
 		console.log("Added new thing at " + x + " " + y);
-		things.push(new Thing(x, y, 20, color, true));
+		lastThing = new Thing(x, y, 20, color, true, -1);
+		things.push(lastThing);
 		update();
 	});
 	
@@ -159,6 +163,13 @@ function update()
 		var thing = things[i];
 		if (thing.msgCD > 0)
 			thing.msgCD--;
+		if (thing.lifetime > 0)
+			thing.lifetime--;
+		if (thing.lifetime == 0)
+		{
+			things.splice(things.indexOf(thing), 1);
+			continue;
+		}
 		thing.draw(ctx);
 	}
 	
@@ -170,50 +181,23 @@ function update()
 
 function collisionCheck()
 {
+//	if (lastThing)
+//		console.log(lastThing.vX + " " + lastThing.vY);
 	for (var i in things)
 	{
 		var thing = things[i];
 		if (thing == currentThing)
 			continue;
-		
-		// GRAVITY //
-		// Needs to accelerate? down is positive
-		thing.vY += MULTIPLIER * INTERVAL / 1000;
+		//console.log(i + " " + thing.vX + " " + thing.vY);
+
 		
 		// Now actually add velocities onto the coords
 		thing.y += thing.vY * INTERVAL / 1000;
 		thing.x += thing.vX * INTERVAL / 1000;
-		
-		// WALL CHECKS //
-		if (thing.y + thing.size >= FLOORLEVEL)
-		{
-			thing.y = FLOORLEVEL - thing.size;
-			thing.vY = -thing.vY * 0.5;
-			if (Math.abs(thing.vY) < 10)
-				thing.vY = 0;
-			else
-				thing.say();
-		}
-		else if (thing.y - thing.size <= 0)
-		{
-			thing.y = thing.size;
-			thing.vY = -thing.vY * 0.5;
-			thing.say();
-		}
-		if (thing.x + thing.size >= canvas.width)
-		{
-			thing.x = canvas.width - thing.size;
-			thing.vX = -thing.vX * 0.8;
-			if (Math.abs(thing.vX) > 10)
-				thing.say();
-		}
-		else if (thing.x - thing.size <= 0)
-		{
-			thing.x = thing.size;
-			thing.vX = -thing.vX * 0.8;
-			if (Math.abs(thing.vX) > 10)
-				thing.say();
-		}
+
+		// GRAVITY //
+		if (gravityEnabled)
+			thing.vY += MULTIPLIER * INTERVAL / 1000;
 		
 		// Friction! But only if on the ground
 		if (thing.y == FLOORLEVEL - thing.size)
@@ -238,12 +222,15 @@ function collisionCheck()
 			var thing2 = things[j];
 			if (i == j || thing.exclude.indexOf(thing2) != -1)
 				continue;
-			if (thing.collides(thing2))
+			var collidetype = thing.collides(thing2);
+			if (collidetype > 0)
 			{
-				console.log("collide");
 				thing.exclude.push(thing2);
+				if (collidetype == 2)
+					unstuck(thing, thing2);
 				
-				
+				collide(thing, thing2);
+				/*
 				var velX1 = (thing.vX * (thing.size - thing2.size) + (2 * thing2.size * thing2.vX)) / (thing.size + thing2.size);
 				var velY1 = (thing.vY * (thing.size - thing2.size) + (2 * thing2.size * thing2.vY)) / (thing.size + thing2.size);
 				var velX2 = (thing2.vX * (thing2.size - thing.size) + (2 * thing.size * thing.vX)) / (thing.size + thing2.size);
@@ -253,7 +240,39 @@ function collisionCheck()
 				thing.vY = velY1;
 				thing2.vX = velX2;
 				thing2.vY = velY2;
+				*/
 			}
+		}		
+		
+		// WALL CHECKS //
+		if (thing.y + thing.size >= FLOORLEVEL)
+		{
+			thing.y = FLOORLEVEL - thing.size;
+			thing.vY = -thing.vY * 0.5;
+			if (Math.abs(thing.vY) < 40)
+				thing.vY = 0;
+			else
+				thing.say();
+		}
+		else if (thing.y - thing.size <= 0)
+		{
+			thing.y = thing.size;
+			thing.vY = -thing.vY * 0.5;
+			thing.say();
+		}
+		if (thing.x + thing.size >= canvas.width)
+		{
+			thing.x = canvas.width - thing.size;
+			thing.vX = -thing.vX * 0.8;
+			if (Math.abs(thing.vX) > 20)
+				thing.say();
+		}
+		else if (thing.x - thing.size <= 0)
+		{
+			thing.x = thing.size;
+			thing.vX = -thing.vX * 0.8;
+			if (Math.abs(thing.vX) > 20)
+				thing.say();
 		}
 		
 		for (var j in things)
@@ -262,6 +281,45 @@ function collisionCheck()
 		}
 	}
 	update();
+}
+
+function collide(thing1, thing2)
+{
+	var dx = thing1.x - thing2.x;
+	var dy = thing1.y - thing2.y;
+	var angle = Math.atan2(dy, dx);
+	var m1 = Math.sqrt(thing1.vX * thing1.vX  + thing1.vY * thing1.vY);
+	var m2 = Math.sqrt(thing2.vX * thing2.vX  + thing2.vY * thing2.vY);
+	var dir1 = Math.atan2(thing1.vY, thing1.vX);
+	var dir2 = Math.atan2(thing2.vY, thing2.vX);
+	var vx1 = m1 * Math.cos(dir1 - angle);
+	var vy1 = m1 * Math.sin(dir1 - angle);
+	var vx2 = m2 * Math.cos(dir2 - angle);
+	var vy2 = m2 * Math.sin(dir2 - angle);
+	var fvx1 = ((thing1.size - thing2.size) * vx1 + (thing2.size + thing2.size) * vx2) / (thing1.size + thing2.size);
+	var fvx2 = ((thing2.size - thing1.size) * vx2 + (thing1.size + thing1.size) * vx1) / (thing1.size + thing2.size);
+	thing1.vX = Math.cos(angle) * fvx1 + Math.cos(angle + Math.PI/2) * vy1;
+	thing1.vY = Math.sin(angle) * fvx1 + Math.sin(angle + Math.PI/2) * vy1;
+	thing2.vX = Math.cos(angle) * fvx2 + Math.cos(angle + Math.PI/2) * vy2;
+	thing2.vY = Math.sin(angle) * fvx2 + Math.sin(angle + Math.PI/2) * vy2;
+}
+
+function unstuck(thing1, thing2)
+{
+	//console.log("unstick");
+	
+	var dx = thing1.x - thing2.x;
+	var dy = thing1.y - thing2.y;
+	var dist = Math.sqrt(Math.pow(thing1.x - thing2.x, 2) + Math.pow(thing1.y - thing2.y, 2));
+	var r = thing1.size + thing2.size;
+	var fraction = (r - dist)/r;
+	//console.log("r: " + r + " fraction: " + fraction);
+	if (dx > 0)
+		thing1.x += r * fraction * (dx/Math.abs(dx));
+	if (dy > 0)
+		thing1.y += r * fraction * (dy/Math.abs(dy));
+	//console.log("x: " + thing1.x + "y: " + thing1.y);
+	
 }
 
 function getContext()
@@ -290,19 +348,21 @@ var chaos = function()
 //////////////////
 // THING OBJECT //
 //////////////////
-function Thing(x, y, size, color, canSay)
+function Thing(x, y, size, color, canSay, lifetime)
 {
 	this.x = x;
 	this.y = y;
 	this.size = size;
 	this.color = color;
-	this.canSay = canSay
+	this.canSay = canSay;
+	this.lifetime = lifetime;
 	this.vX = 0;
 	this.vY = 0;
 	this.msg = "";
 	this.msgCD = 0;
 	this.xOffset = 0;
 	this.yOffset = 0;
+	this.exclude = [];
 }
 
 Thing.prototype.draw = function(ctx)
@@ -333,9 +393,18 @@ Thing.prototype.say = function()
 	this.yOffset = Math.floor(Math.random() * this.size * 2 - this.size)
 }
 
+/**
+ * 0 = no collide, 1 = just touching, 2 = too close
+ */
 Thing.prototype.collides = function(thing)
 {
-	return (Math.pow(thing.x - this.x, 2) + Math.pow(thing.y - this.y, 2) < Math.pow(thing.size + this.size, 2));
+	var dist = Math.sqrt(Math.pow(thing.x - this.x, 2) + Math.pow(thing.y - this.y, 2));
+	var r = thing.size + this.size;
+	if (dist < r - 2)
+		return 2;
+	else if (dist < r)
+		return 1;
+	return 0;
 }
 
 //////////////////
@@ -360,7 +429,7 @@ Gun.prototype.draw = function(ctx)
 
 Gun.prototype.launch = function(vX, vY)
 {
-	var newThing = new Thing(this.x, this.y, 10, "rgba(100,100,100,0.8)", false);
+	var newThing = new Thing(this.x, this.y, 10, "rgba(100,100,100,0.8)", false, 200);
 	newThing.vX = vX;
 	newThing.vY = vY;
 	things.push(newThing);
@@ -369,4 +438,11 @@ Gun.prototype.launch = function(vX, vY)
 Gun.prototype.contains = function(x, y)
 {
 	return (Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2) <= this.size * this.size);
+}
+
+////////////////////
+
+var gravity = function()
+{
+	gravityEnabled = document.getElementById("gravity").checked;
 }

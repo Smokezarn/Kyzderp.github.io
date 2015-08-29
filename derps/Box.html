@@ -8,7 +8,8 @@
 		<p>Double-click to add a ball, drag and release to throw</p>
 		<canvas id="canvas" width="1200" height="560"></canvas>
 		<p>
-			<input type="button" value="Chaos!" onClick="chaos()"></input>
+			<input type="checkbox" id="gravity" checked=1 onChange="gravity()">Gravity</input><br/>
+			<input type="button" value="Chaos!" onClick="chaos()"></input><br/>
 		</p>
 		<script type="text/javascript">
 			document.body.style.font = "14px sans-serif";
