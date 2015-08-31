@@ -38,7 +38,7 @@ var main = function()
 		}
 		if (found)
 		{
-			found.launch((x - found.x) * 50, (y - found.y) * 50)
+			found.launch((x - found.x) * 30, (y - found.y) * 30)
 		}
 	});
 	
@@ -172,9 +172,11 @@ function collisionCheck()
 		if (score < INTERVAL)
 			enemies.push(new Enemy(15, 15, "rgba(200,100,100,0.8)", 30));
 		else if (score < 30000 + INTERVAL && score >= 30000)
-		{
 			enemies.push(new Enemy(canvas.width - 15, canvas.height - 15, "rgba(200,200,100,0.8)", 30));
-		}
+		else if (score < 60000 + INTERVAL && score >= 60000)
+			enemies.push(new Enemy(canvas.width - 15, 15, "rgba(100,200,200,0.8)", 30));
+		else if (score < 90000 + INTERVAL && score >= 90000)
+			enemies.push(new Enemy(15, canvas.height - 15, "rgba(200,100,200,0.8)", 30));
 		
 		score += INTERVAL;
 	}
@@ -306,11 +308,12 @@ function Gun(x, y, size)
 Gun.prototype.draw = function(ctx)
 {
 	ctx.fillStyle = "rgba(100,100,100,0.8)";
-	ctx.strokeStyle = "rgba(100,100,100)";
 	var path = new Path2D();
 	path.arc(this.x, this.y, this.size, 0, 360);
 	ctx.fill(path);
-	ctx.stroke(path);
+	path = new Path2D();
+	path.arc(this.x, this.y, 5, 0, 360);
+	ctx.fill(path);
 }
 
 Gun.prototype.launch = function(vX, vY)
