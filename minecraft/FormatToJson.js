@@ -3,7 +3,12 @@ var submitForm = function()
 	var input = document.getElementById("inputtext").value;
 	var result = parse(input);
 	if (result != "")
+	{
+		var prefix = document.getElementById("tellraw").checked;
+		if (prefix)
+			result = "/tellraw @a " + result;
 		document.getElementById("outputtext").innerHTML = result;
+	}
 };
 
 function parse(input)
