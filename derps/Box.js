@@ -315,9 +315,15 @@ function unstuck(thing1, thing2)
 	var fraction = (r - dist)/r;
 	//console.log("r: " + r + " fraction: " + fraction);
 	if (dx > 0)
-		thing1.x += r * fraction * (dx/Math.abs(dx));
+	{
+		var xoff = (r * fraction + 1) * (dx/Math.abs(dx));
+		if (thing1.x + xoff < thing1.size || thing1.x + xoff > canvas.width - thing1.size)
+			thing2.x -= xoff;
+		else
+			thing1.x += xoff;
+	}
 	if (dy > 0)
-		thing1.y += r * fraction * (dy/Math.abs(dy));
+		thing1.y += (r * fraction + 1) * (dy/Math.abs(dy));
 	//console.log("x: " + thing1.x + "y: " + thing1.y);
 	
 }
@@ -332,17 +338,6 @@ function getContext()
 		return ctx;
 	}
 	return "";
-}
-
-var chaos = function()
-{
-	var hrng = [-1, 1];
-	for (var i in things)
-	{
-		var thing = things[i];
-		thing.vX += hrng[Math.floor(Math.random() * 2)]*Math.floor(Math.random() * CHAOS + CHAOS);
-		thing.vY += hrng[Math.floor(Math.random() * 2)]*Math.floor(Math.random() * CHAOS + CHAOS);
-	}
 }
 
 //////////////////
@@ -445,4 +440,20 @@ Gun.prototype.contains = function(x, y)
 var gravity = function()
 {
 	gravityEnabled = document.getElementById("gravity").checked;
-}
+};
+
+var reset = function()
+{
+	things = new Array();
+};
+
+var chaos = function()
+{
+	var hrng = [-1, 1];
+	for (var i in things)
+	{
+		var thing = things[i];
+		thing.vX += hrng[Math.floor(Math.random() * 2)]*Math.floor(Math.random() * CHAOS + CHAOS);
+		thing.vY += hrng[Math.floor(Math.random() * 2)]*Math.floor(Math.random() * CHAOS + CHAOS);
+	}
+};

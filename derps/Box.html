@@ -5,11 +5,17 @@
 		<style type="text/css">canvas { border: 1px solid black; }</style>
 	</head>
 	<body onLoad="main()">
-		<p>Double-click to add a ball, drag and release to throw</p>
+		<p>
+			Double-click to add a ball, drag and release to throw.<br/>
+			Click on rim of large gray circle to shoot "bullets," the further away from center of circle the greater the velocity.
+		</p>
 		<canvas id="canvas" width="1200" height="560"></canvas>
 		<p>
-			<input type="checkbox" id="gravity" checked=1 onChange="gravity()">Gravity</input><br/>
+			<input type="checkbox" id="gravity" checked=1 onChange="gravity()">Gravity</input>
+		</p>
+		<p>
 			<input type="button" value="Chaos!" onClick="chaos()"></input><br/>
+			<input type="button" value="Clear" onClick="reset()"></input>
 		</p>
 		<script type="text/javascript">
 			document.body.style.font = "14px sans-serif";

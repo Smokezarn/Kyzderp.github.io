@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>Ball Defense</title>
+		<script type="text/javascript" src="Defense.js"></script>
+		<style type="text/css">canvas { border: 1px solid black; }</style>
+	</head>
+	<body onLoad="main()">
+		<p>
+			Click on rim of large gray circle to shoot "bullets," the further away from center of circle the greater the velocity. Bullets fade over time.<br/>
+			Objective: Survive as long as you can without letting enemy balls hit you.
+		</p>
+		<canvas id="canvas" width="1200" height="560"></canvas>
+		<p>
+			<input type="button" value="Start" onClick="start()"></input><br/>
+			<input type="button" value="Stop" onClick="stop()"></input>
+		</p>
+		<script type="text/javascript">
+			document.body.style.font = "14px sans-serif";
+		</script>
+	</body>
+</html>
