@@ -10,7 +10,6 @@ var gameover = false;
 
 var main = function()
 {
-	console.log("Entered main.");
 	var canvas = document.getElementById("canvas");
 	
 	// Get rid of annoying text select
@@ -238,9 +237,9 @@ function getContext()
 
 var game = function()
 {
-	console.log("Game over");
 	gameover = true;
 	running = false;
+	document.getElementById("control").value = "Try Again";
 }
 
 //////////////////
@@ -363,13 +362,12 @@ Enemy.prototype.launch = function()
 
 var stop = function()
 {
-	console.log("Stop");
 	running = false;
+	document.getElementById("control").value = "Resume";
 };
 
 var start = function()
 {
-	console.log("Start");
 	if (gameover)
 	{
 		delete things;
@@ -378,7 +376,15 @@ var start = function()
 		enemies = new Array();
 		score = 0;
 		gameover = false;
-
 	}
 	running = true;
+	document.getElementById("control").value = "Pause";
 };
+
+var toggle = function()
+{
+	if (running)
+		stop();
+	else
+		start();
+}
