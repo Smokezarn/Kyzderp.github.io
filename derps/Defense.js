@@ -3,6 +3,9 @@ var guns = new Array();
 var enemies = new Array();
 
 var INTERVAL = 30;
+var RELOADTIME = 300;
+var ENEMYRELOAD = 6000;
+var FLOORLEVEL;
 
 var running = false;
 var score = 0;
@@ -11,6 +14,7 @@ var gameover = false;
 var main = function()
 {
 	var canvas = document.getElementById("canvas");
+	FLOORLEVEL = canvas.height;// - 25;
 	
 	// Get rid of annoying text select
 	canvas.addEventListener("selectstart", function(e)
@@ -35,13 +39,16 @@ var main = function()
 				break;
 			}
 		}
-		if (found)
+		if (found && found.reload >= RELOADTIME)
 		{
-			found.launch((x - found.x) * 30, (y - found.y) * 30)
+			found.launch((x - found.x) * 30, (y - found.y) * 30);
+			found.reload = 0;
+			score -= 1000;
 		}
 	});
-	
-	guns.push(new Gun(canvas.width/2, canvas.height/2, 30));	
+		
+	guns.push(new Gun(canvas.width/2, FLOORLEVEL/2, 30));	
+	update();
 	setInterval(function() { collisionCheck(); }, INTERVAL);
 }
 
@@ -49,7 +56,7 @@ function update()
 {
 	var ctx = getContext();
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.strokeStyle = "rgb(0,0,0)";
+	
 
 	for (var i in things)
 	{
@@ -72,22 +79,33 @@ function update()
 	
 	for (var i in guns)
 	{
-		guns[i].draw(ctx);
+		var gun = guns[i];
+		if (running && gun.reload < RELOADTIME)
+			gun.reload += INTERVAL;
+		gun.draw(ctx);
 	}
 	
 	for (var i in enemies)
 	{
-		enemies[i].draw(ctx);
+		var enemy = enemies[i];
+		if (running && enemy.reload < ENEMYRELOAD)
+			enemy.reload += INTERVAL;
+		enemy.draw(ctx);
 	}
+	
+	ctx.clearRect(0, FLOORLEVEL, canvas.width, canvas.height - FLOORLEVEL);
+	ctx.strokeStyle = "rgb(0,0,0)";
+	ctx.strokeRect(0, 0, canvas.width, FLOORLEVEL);
 	
 	ctx.fillStyle = "rgb(50,0,0)";
 	ctx.font = "20px sans-serif";
 	ctx.fillText("Score: " + score, 5, canvas.height - 5);
 	if (gameover)
 	{
-		ctx.fillText("Game Over", (canvas.width - ctx.measureText("Game Over").width)/2, canvas.height/2)
+		ctx.fillText("Game Over", (canvas.width - ctx.measureText("Game Over").width)/2, FLOORLEVEL/2)
 	}
 	
+
 	ctx.font = "14px sans-serif";
 }
 
@@ -125,17 +143,14 @@ function collisionCheck()
 				for (var j in guns)
 				{
 					if (thing.collides(guns[j]) > 0)
-					{
-						// Game over
 						game();
-					}
 				}
 			}
 			
 			// WALL CHECKS //
-			if (thing.y + thing.size >= canvas.height)
+			if (thing.y + thing.size >= FLOORLEVEL)
 			{
-				thing.y = canvas.height - thing.size;
+				thing.y = FLOORLEVEL - thing.size;
 				thing.vY = -thing.vY * 0.5;
 			}
 			else if (thing.y - thing.size <= 0)
@@ -163,23 +178,26 @@ function collisionCheck()
 		for (var i in enemies)
 		{
 			var enemy = enemies[i];
-			// Fire new one every 9 secs
-			if (score % 6000 == 3000)
+			// Fire new one every 6 secs
+			if (enemy.reload >= ENEMYRELOAD)
+			{
 				enemy.launch();
+				enemy.reload = 0;
+			}
 		}
 		
-		if (score < INTERVAL)
-			enemies.push(new Enemy(15, 15, "rgba(200,100,100,0.8)", 30));
-		else if (score < 30000 + INTERVAL && score >= 30000)
-			enemies.push(new Enemy(canvas.width - 15, canvas.height - 15, "rgba(200,200,100,0.8)", 30));
-		else if (score < 60000 + INTERVAL && score >= 60000)
-			enemies.push(new Enemy(canvas.width - 15, 15, "rgba(100,200,200,0.8)", 30));
-		else if (score < 90000 + INTERVAL && score >= 90000)
-			enemies.push(new Enemy(15, canvas.height - 15, "rgba(200,100,200,0.8)", 30));
+		if (score < INTERVAL && enemies.length == 0)
+			enemies.push(new Enemy(30, 30, "rgba(200,100,100,0.8)", 30));
+		else if (enemies.length == 1 && score < 30000 + INTERVAL && score >= 30000)
+			enemies.push(new Enemy(canvas.width - 30, FLOORLEVEL - 30, "rgba(200,200,100,0.8)", 30));
+		else if (enemies.length == 2 && score < 60000 + INTERVAL && score >= 60000)
+			enemies.push(new Enemy(canvas.width - 30, 30, "rgba(100,200,200,0.8)", 30));
+		else if (enemies.length == 3 && score < 90000 + INTERVAL && score >= 90000)
+			enemies.push(new Enemy(30, FLOORLEVEL - 30, "rgba(200,100,200,0.8)", 30));
 		
 		score += INTERVAL;
+		update();
 	}
-	update();
 }
 
 function collide(thing1, thing2)
@@ -302,16 +320,24 @@ function Gun(x, y, size)
 	this.x = x;
 	this.y = y;
 	this.size = size;
+	this.reload = RELOADTIME;
 }
 
 Gun.prototype.draw = function(ctx)
 {
 	ctx.fillStyle = "rgba(100,100,100,0.8)";
 	var path = new Path2D();
-	path.arc(this.x, this.y, this.size, 0, 360);
+	path.arc(this.x, this.y, this.size, 0, 2*Math.PI);
 	ctx.fill(path);
 	path = new Path2D();
 	path.arc(this.x, this.y, 5, 0, 360);
+	ctx.fill(path);
+	
+	path = new Path2D();
+	path.moveTo(this.x, this.y);
+	path.lineTo(this.x, this.y - this.size);
+	if (this.reload < RELOADTIME)
+		path.arc(this.x, this.y, this.size, -Math.PI/2, 2*Math.PI*this.reload/RELOADTIME - Math.PI/2, true);
 	ctx.fill(path);
 }
 
@@ -338,6 +364,7 @@ function Enemy(x, y, color, size)
 	this.y = y;
 	this.color = color;
 	this.size = size;
+	this.reload = ENEMYRELOAD - 3000;
 }
 
 Enemy.prototype.draw = function(ctx)
@@ -346,13 +373,25 @@ Enemy.prototype.draw = function(ctx)
 	var path = new Path2D();
 	path.arc(this.x, this.y, this.size, 0, 360);
 	ctx.fill(path);
+
+	path = new Path2D();
+	path.moveTo(this.x, this.y);
+	path.lineTo(this.x, this.y - this.size);
+	if (this.reload < ENEMYRELOAD)
+		path.arc(this.x, this.y, this.size, -Math.PI/2, 2*Math.PI*this.reload/ENEMYRELOAD - Math.PI/2, true);
+	ctx.fill(path);
 }
 
 Enemy.prototype.launch = function()
 {
+	var x = 1, y = 1;
+	if (this.x > canvas.width/2)
+		x = -1;
+	if (this.y > canvas.height/2)
+		y = -1;
 	var newThing = new Thing(this.x, this.y, 20, this.color, -1, "enemyball");
-	newThing.vX = Math.random() * 50 + 100;
-	newThing.vY = Math.random() * 50 + 100;
+	newThing.vX = x * (Math.random() * 50 + 100);
+	newThing.vY = y * (Math.random() * 50 + 100);
 	things.push(newThing);
 }
 

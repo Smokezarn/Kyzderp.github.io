@@ -2,15 +2,18 @@
 	<head>
 		<title>Ball Defense</title>
 		<script type="text/javascript" src="Defense.js"></script>
-		<style type="text/css">canvas { border: 1px solid black; }</style>
+		<!-- <style type="text/css">canvas { border: 1px solid black; }</style> -->
 	</head>
 	<body onLoad="main()">
 		<p>
-			Click on the rim of large gray circle to shoot "bullets". The further away from the center of circle, the greater the velocity. Bullets fade over time.<br/>
+			How to play: Click on the rim of large gray circle to shoot "bullets". The further away from the center of circle, the greater the velocity. It takes 300 milliseconds to reload. Bullets fade over time.<br/>
 			Use the buttons below to start/pause.
 		</p>
 		<p>
 			Objective: Survive as long as you can without letting enemy balls hit you. Difficulty increases exponentially as time progresses!
+		</p>
+		<p>
+			Score calculation: You gain 1000 points for every second you survive. Firing a bullet costs 1000 points. New enemies are added at 30k, 60k, and 90k points.
 		</p>
 		<canvas id="canvas" width="1200" height="560"></canvas>
 		<p>
