@@ -2,7 +2,7 @@ var things = new Array();
 var guns = new Array();
 var enemies = new Array();
 
-var INTERVAL = 20;
+var INTERVAL = 30;
 var RELOADTIME = 300;
 var ENEMYRELOAD = 6000;
 var FLOORLEVEL;
@@ -59,26 +59,34 @@ var main = function()
 		
 	guns.push(new Gun(canvas.width/2, FLOORLEVEL/2, 30));	
 	update();
-	setInterval(function() { collisionCheck(); }, INTERVAL);
+	
+	setTimeout(callback, INTERVAL-1);
+}
+
+
+function callback()
+{
+	collisionCheck();
+	setTimeout(callback, INTERVAL-1);
 }
 
 function update()
 {
 	var ctx = getContext();
+	ctx.fillStyle = "rgb(150,150,150)";
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	
 
 	for (var i in things)
 	{
 		var thing = things[i];
 		
-		if (running)
+		if (running && thing.lifetime != "nonexpire")
 		{
-			if (thing.msgCD > 0)
-				thing.msgCD--;
 			if (thing.lifetime > 0)
-				thing.lifetime--;
-			if (thing.lifetime == 0)
+				thing.lifetime -= INTERVAL;
+			if (thing.lifetime <= 0)
 			{
 				things.splice(things.indexOf(thing), 1);
 				continue;
@@ -107,12 +115,16 @@ function update()
 	ctx.strokeStyle = "rgb(0,0,0)";
 	ctx.strokeRect(0, 0, canvas.width, FLOORLEVEL);
 	
-	ctx.fillStyle = "rgb(50,0,0)";
-	ctx.font = "20px sans-serif";
+	ctx.fillStyle = "rgb(0,0,0)";
+	ctx.font = "bold 16px Arial,sans-serif";
 	ctx.fillText("Score: " + score, 5, canvas.height - 5);
 	if (gameover)
 	{
-		ctx.fillText("Game Over", (canvas.width - ctx.measureText("Game Over").width)/2, FLOORLEVEL/2)
+		ctx.font = "bold 30px Arial,sans-serif";
+		ctx.fillText("GAME OVER", (canvas.width - ctx.measureText("GAME OVER").width)/2, FLOORLEVEL/2);
+		ctx.font = "bold 16px Arial,sans-serif";
+		ctx.fillText("SCORE: " + score, (canvas.width - ctx.measureText("SCORE: " + score).width)/2, FLOORLEVEL/2 + 20);
+
 	}
 	
 
@@ -197,13 +209,13 @@ function collisionCheck()
 		}
 		
 		if (score < INTERVAL && enemies.length == 0)
-			enemies.push(new Enemy(30, 30, "rgba(200,100,100,0.8)", 30));
+			enemies.push(new Enemy(30, 30, "200,100,100", 30));
 		else if (enemies.length == 1 && score < 30000 + INTERVAL && score >= 30000)
-			enemies.push(new Enemy(canvas.width - 30, FLOORLEVEL - 30, "rgba(200,200,100,0.8)", 30));
+			enemies.push(new Enemy(canvas.width - 30, FLOORLEVEL - 30, "200,200,100", 30));
 		else if (enemies.length == 2 && score < 60000 + INTERVAL && score >= 60000)
-			enemies.push(new Enemy(canvas.width - 30, 30, "rgba(100,200,200,0.8)", 30));
+			enemies.push(new Enemy(canvas.width - 30, 30, "100,200,200", 30));
 		else if (enemies.length == 3 && score < 90000 + INTERVAL && score >= 90000)
-			enemies.push(new Enemy(30, FLOORLEVEL - 30, "rgba(200,100,200,0.8)", 30));
+			enemies.push(new Enemy(30, FLOORLEVEL - 30, "200,100,200", 30));
 		
 		score += INTERVAL;
 		update();
@@ -283,8 +295,6 @@ function Thing(x, y, size, color, lifetime, type)
 	this.type = type;
 	this.vX = 0;
 	this.vY = 0;
-	this.msg = "";
-	this.msgCD = 0;
 	this.xOffset = 0;
 	this.yOffset = 0;
 	this.exclude = [];
@@ -294,13 +304,8 @@ Thing.prototype.draw = function(ctx)
 {
 	var path = new Path2D();
 	path.arc(this.x, this.y, this.size, 0, 360);
-	ctx.fillStyle = this.color;
+	ctx.fillStyle = "rgba(" + this.color + ",0.8)";
 	ctx.fill(path);
-	if (this.msgCD > 0)
-	{
-		ctx.fillStyle = "rgba(0,0,0,0.9)";
-		ctx.fillText(this.msg, this.x - this.xOffset, this.y - this.yOffset);
-	}
 }
 
 Thing.prototype.contains = function(x, y)
@@ -353,7 +358,7 @@ Gun.prototype.draw = function(ctx)
 
 Gun.prototype.launch = function(vX, vY)
 {
-	var newThing = new Thing(this.x, this.y, 10, "rgba(100,100,100,0.8)", 200, "bullet");
+	var newThing = new Thing(this.x, this.y, 10, "100,100,100", 5000, "bullet");
 	newThing.vX = vX;
 	newThing.vY = vY;
 	things.push(newThing);
@@ -379,7 +384,7 @@ function Enemy(x, y, color, size)
 
 Enemy.prototype.draw = function(ctx)
 {
-	ctx.fillStyle = this.color;
+	ctx.fillStyle = "rgba(" + this.color + ",0.6)";
 	var path = new Path2D();
 	path.arc(this.x, this.y, this.size, 0, 360);
 	ctx.fill(path);
@@ -389,6 +394,7 @@ Enemy.prototype.draw = function(ctx)
 	path.lineTo(this.x, this.y - this.size);
 	if (this.reload < ENEMYRELOAD)
 		path.arc(this.x, this.y, this.size, -Math.PI/2, 2*Math.PI*this.reload/ENEMYRELOAD - Math.PI/2, true);
+	ctx.fillStyle = "rgb(" + this.color + ")";
 	ctx.fill(path);
 }
 
@@ -399,7 +405,7 @@ Enemy.prototype.launch = function()
 		x = -1;
 	if (this.y > canvas.height/2)
 		y = -1;
-	var newThing = new Thing(this.x, this.y, 20, this.color, -1, "enemyball");
+	var newThing = new Thing(this.x, this.y, 20, this.color, "nonexpire", "enemyball");
 	newThing.vX = x * (Math.random() * 20 + 100);
 	newThing.vY = y * (Math.random() * 20 + 50);
 	things.push(newThing);
@@ -438,3 +444,10 @@ var toggle = function()
 		start();
 }
 
+
+//// SETTINGS ////
+function changeFPS()
+{
+	INTERVAL = parseInt(document.getElementById("fps").value);
+	document.getElementById("fpsdisplay").innerHTML = INTERVAL + "ms (~" + Math.floor(1000/INTERVAL) + " fps)";
+}

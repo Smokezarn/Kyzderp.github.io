@@ -6,28 +6,40 @@
 		<link rel="stylesheet" type="text/css" href="format.css">
 	</head>
 	<body onLoad="main()">
-		<p>
-			How to play: Click on the rim of the gray circle to shoot "bullets". The further away from the center of circle, the greater the velocity. It takes 300 milliseconds to reload. Bullets fade over time.<br/>
-			Use the buttons below to start/pause.
-		</p>
-		<p>
-			Objective: Survive as long as you can without letting enemy balls hit you. Difficulty increases exponentially as time progresses!
-		</p>
-		<p>
-			Score calculation: You gain 1000 points for every second you survive. Firing a bullet costs 1000 points. New enemies are added at 30k, 60k, and 90k points.
-		</p>
-		
 		<div class="container">
-			<div class="header"><span>Settings</span>
-			</div>
+			<div class="header"><span>How to Play</span></div>
 			<div class="content">
-				There are no settings yet, ha!
+			<p>
+				<b>Controls</b><br/>
+				Click on the rim of the gray circle to shoot "bullets". The further away from the center of circle, the greater the velocity. It takes 300 milliseconds to reload. Bullets fade over time.<br/>
+				Use the buttons below to start/pause.
+			</p>
+			<p>
+				<b>Objective</b><br/>
+				Survive as long as you can without letting enemy balls hit you. Difficulty increases exponentially as time progresses!
+			</p>
+			<p>
+				<b>Score Calculation</b><br/>
+				You gain 1000 points for every second you survive. Firing a bullet costs 1000 points. New enemies are added at 30k, 60k, and 90k points.
+			</p>
+			</div>
+		</div>
+		<br/>
+		<div class="container">
+			<div class="header"><span>Settings</span></div>
+			<div class="content">
+				<p>
+					<b>Frame Interval</b><br/>
+					The lower the frame interval (higher FPS), the more accurate the collisions. However, too low may slow down the game with too many calculations.<br/>
+					<input id="fps" type="range" min="5" max="100" step="1" value="25" onChange="changeFPS()"></input><br/>
+					<b id="fpsdisplay">25ms (~40 fps)</b>
+				</p>
 			</div>
 		</div>
 		<br/>
 		<canvas id="canvas" width="1200" height="560"></canvas>
 		<p>
-			<input id="control" type="button" value="Start" onClick="toggle()"></input>
+			<input class="btn" id="control" type="button" value="Start" onClick="toggle()"></input>
 		</p>
 		<script type="text/javascript">
 			document.body.style.font = "14px sans-serif";
