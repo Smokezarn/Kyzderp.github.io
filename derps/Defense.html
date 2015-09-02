@@ -1,12 +1,13 @@
 <html>
 	<head>
 		<title>Ball Defense</title>
+		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="Defense.js"></script>
-		<!-- <style type="text/css">canvas { border: 1px solid black; }</style> -->
+		<link rel="stylesheet" type="text/css" href="format.css">
 	</head>
 	<body onLoad="main()">
 		<p>
-			How to play: Click on the rim of large gray circle to shoot "bullets". The further away from the center of circle, the greater the velocity. It takes 300 milliseconds to reload. Bullets fade over time.<br/>
+			How to play: Click on the rim of the gray circle to shoot "bullets". The further away from the center of circle, the greater the velocity. It takes 300 milliseconds to reload. Bullets fade over time.<br/>
 			Use the buttons below to start/pause.
 		</p>
 		<p>
@@ -15,6 +16,15 @@
 		<p>
 			Score calculation: You gain 1000 points for every second you survive. Firing a bullet costs 1000 points. New enemies are added at 30k, 60k, and 90k points.
 		</p>
+		
+		<div class="container">
+			<div class="header"><span>Settings</span>
+			</div>
+			<div class="content">
+				There are no settings yet, ha!
+			</div>
+		</div>
+		<br/>
 		<canvas id="canvas" width="1200" height="560"></canvas>
 		<p>
 			<input id="control" type="button" value="Start" onClick="toggle()"></input>

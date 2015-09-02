@@ -2,7 +2,7 @@ var things = new Array();
 var guns = new Array();
 var enemies = new Array();
 
-var INTERVAL = 30;
+var INTERVAL = 20;
 var RELOADTIME = 300;
 var ENEMYRELOAD = 6000;
 var FLOORLEVEL;
@@ -41,10 +41,20 @@ var main = function()
 		}
 		if (found && found.reload >= RELOADTIME)
 		{
-			found.launch((x - found.x) * 30, (y - found.y) * 30);
+			found.launch((x - found.x) * 20, (y - found.y) * 20);
 			found.reload = 0;
 			score -= 1000;
 		}
+	});
+	
+	$(".header").click(function()
+	{
+		$header = $(this);
+		$content = $header.next();
+		$content.slideToggle(500, function()
+		{
+			// Do something
+		});
 	});
 		
 	guns.push(new Gun(canvas.width/2, FLOORLEVEL/2, 30));	
@@ -390,8 +400,8 @@ Enemy.prototype.launch = function()
 	if (this.y > canvas.height/2)
 		y = -1;
 	var newThing = new Thing(this.x, this.y, 20, this.color, -1, "enemyball");
-	newThing.vX = x * (Math.random() * 50 + 100);
-	newThing.vY = y * (Math.random() * 50 + 100);
+	newThing.vX = x * (Math.random() * 20 + 100);
+	newThing.vY = y * (Math.random() * 20 + 50);
 	things.push(newThing);
 }
 
@@ -427,3 +437,4 @@ var toggle = function()
 	else
 		start();
 }
+

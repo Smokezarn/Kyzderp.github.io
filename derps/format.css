@@ -1,0 +1,20 @@
+.container {
+	width:1200;
+	border:  1px solid #AAAAAA;
+}
+
+.container div {
+	width: 1196;
+}
+
+.container .header {
+	background-color: #DDDDDD;
+	padding: 2px;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.container .content {
+	display: none;
+	padding: 5px;
+}
