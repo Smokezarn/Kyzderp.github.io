@@ -76,11 +76,12 @@ var main = function()
 		}
 		$content.slideToggle(500, function()
 		{
+			
 			if ($header.attr("id") == "chartheader" && $content.is(":visible"))
 			{
-				showchart();
 				chartvisible = true;
 				document.getElementById("stats").innerHTML = displayStats;
+				showchart();
 			}
 		});
 	});
@@ -346,7 +347,8 @@ var game = function()
 	
 	numGames++;
 	addScore("Game " + numGames, score);
-	displayStats = "Best: " + best + "<br/>Worst: " + worst + "<br/>Average: " + average + "<br/>Games: " + numGames + "<br/>Time Played: " + (("" + Math.floor((timeplayed + gameTime)/1000)).toHHMMSS()) + "<br/>";
+	if (chartvisible)
+		displayStats = "Best: " + best + "<br/>Worst: " + worst + "<br/>Average: " + average + "<br/>Games: " + numGames + "<br/>Time Played: " + (("" + Math.floor((timeplayed + gameTime)/1000)).toHHMMSS()) + "<br/>";
 }
 
 //////////////////
@@ -565,9 +567,9 @@ function initchart()
 
 function showchart()
 {
-	var canvas = document.getElementById("scorechart");
-	canvas.height = 500;
-	canvas.width = 1000;
+	var chartcanvas = document.getElementById("scorechart");
+	chartcanvas.height = 500;
+	chartcanvas.width = 1000;
 	if (data.labels.length == 0)
 	{
 		chartctx.fillStyle = "rgb(255,255,255)";
@@ -586,5 +588,6 @@ function addScore(label, score)
 {
 	data.labels.push(label);
 	data.datasets[0].data.push(score);
-	showchart();
+	if (chartvisible)
+		showchart();
 }
