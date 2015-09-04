@@ -8,6 +8,7 @@ var submitForm = function()
 		if (prefix)
 			result = "/tellraw @a " + result;
 		document.getElementById("outputtext").innerHTML = result;
+		document.getElementById("outputtext").select();
 	}
 };
 
