@@ -304,7 +304,7 @@ function collide(thing1, thing2)
 	thing2.vY = Math.sin(angle) * fvx2 + Math.sin(angle + Math.PI/2) * vy2;
 }
 
-function unstuck(thing1, thing2)
+function moveunstuck(thing1, thing2)
 {
 	//console.log("unstick");
 	
@@ -326,6 +326,26 @@ function unstuck(thing1, thing2)
 		thing1.y += (r * fraction + 1) * (dy/Math.abs(dy));
 	//console.log("x: " + thing1.x + "y: " + thing1.y);
 	
+}
+
+function unstuck(thing1, thing2)
+{
+	console.log("unstuck");
+	if (Math.abs(thing1.vX) < 50 && Math.abs(thing2.vX) < 50 && Math.abs(thing1.vY) < 50 && Math.abs(thing2.vY) < 50)
+	{
+		moveunstuck(thing1, thing2);
+		return;
+	}
+	do
+	{
+		thing1.x -= thing1.vX/INTERVAL/10;
+		thing1.y -= thing1.vY/INTERVAL/10;
+		thing2.x -= thing2.vX/INTERVAL/10;
+		thing2.y -= thing2.vY/INTERVAL/10;
+		console.log("pos" + thing1.x + " " + thing1.y + " " + thing2.x + " " + thing2.y);
+		console.log("v" + thing1.vX + " " + thing1.vY + " " + thing2.vX + " " + thing2.vY);
+	} while (thing1.collides(thing2) > 1);
+	console.log("exit unstuck");
 }
 
 function getContext()

@@ -106,8 +106,7 @@ function update(firstTime)
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	
-
-	for (var i in things)
+	for (var i = 0; i < things.length;)
 	{
 		var thing = things[i];
 		
@@ -122,6 +121,7 @@ function update(firstTime)
 			}
 		}
 		thing.draw(ctx);
+		i++;
 	}
 	
 	for (var i in guns)
@@ -298,7 +298,7 @@ function collide(thing1, thing2)
 	thing2.vY = Math.sin(angle) * fvx2 + Math.sin(angle + Math.PI/2) * vy2;
 }
 
-function unstuck(thing1, thing2)
+function moveunstuck(thing1, thing2)
 {
 	var dx = thing1.x - thing2.x;
 	var dy = thing1.y - thing2.y;
@@ -316,6 +316,24 @@ function unstuck(thing1, thing2)
 	if (dy > 0)
 		thing1.y += (r * fraction + 1) * (dy/Math.abs(dy));
 	
+}
+
+function unstuck(thing1, thing2)
+{
+	console.log("unstuck");
+	if (Math.abs(thing1.vX) < 50 && Math.abs(thing2.vX) < 50 && Math.abs(thing1.vY) < 50 && Math.abs(thing2.vY) < 50)
+	{
+		moveunstuck(thing1, thing2);
+		return;
+	}
+	do
+	{
+		thing1.x -= thing1.vX/INTERVAL/10;
+		thing1.y -= thing1.vY/INTERVAL/10;
+		thing2.x -= thing2.vX/INTERVAL/10;
+		thing2.y -= thing2.vY/INTERVAL/10;
+	} while (thing1.collides(thing2) > 1);
+	console.log("exit unstuck");
 }
 
 function getContext()
