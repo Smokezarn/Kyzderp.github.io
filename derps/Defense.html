@@ -1,12 +1,15 @@
 <html>
 	<head>
-		<title>Ball Defense</title>
-		<script type="text/javascript" src="jquery.js"></script>
+		<title>Blob Defender</title>
+		<script type="text/javascript" src="../jquery.js"></script>
+		<script type="text/javascript" src="Chart/Chart.js"></script>
 		<script type="text/javascript" src="Defense.js"></script>
-		<link rel="stylesheet" type="text/css" href="format.css">
+		<link rel="stylesheet" type="text/css" href="../formats/format.css">
+		<link rel="stylesheet" type="text/css" href="../formats/inputs.css">
 	</head>
-	<body onLoad="main()">
-		<div class="container">
+	
+	<body onLoad="main()" style="text-align: center;">
+		<div class="container" style="margin: auto; width: 1200;">
 			<div class="header"><span>How to Play</span></div>
 			<div class="content">
 			<p>
@@ -25,24 +28,51 @@
 			</div>
 		</div>
 		<br/>
-		<div class="container">
+		
+		<div class="container" style="margin: auto; width: 1200;">
 			<div class="header"><span>Settings</span></div>
 			<div class="content">
 				<p>
 					<b>Frame Interval</b><br/>
 					The lower the frame interval (higher FPS), the more accurate the collisions. However, too low may slow down the game with too many calculations.<br/>
 					<input id="fps" type="range" min="5" max="100" step="1" value="25" onChange="changeFPS()"></input><br/>
-					<b id="fpsdisplay">25ms (~40 fps)</b>
+					<span id="fpsdisplay">25ms (~40 fps)</span>
+				</p>
+				<br/>				
+				<p>
+					<b>Window Focus</b>
+					<div style="text-align: left; width: 350; margin: auto;">
+						<div class="roundCheckbox">
+							<input id="autopause" type="checkbox" checked="true" onChange="focusOptions()"></input>
+							<label for="autopause"></label>
+						</div>
+						Automatically pause when window is not focused<br/>
+						<div class="roundCheckbox">
+							<input id="autoresume" type="checkbox" onChange="focusOptions()"></input>
+							<label for="autoresume"></label>
+						</div>
+						Automatically resume when window is focused<br/>
+					</div>
 				</p>
 			</div>
-		</div>
-		<br/>
-		<canvas id="canvas" width="1200" height="560"></canvas>
-		<p>
-			<input class="btn" id="control" type="button" value="Start" onClick="toggle()"></input>
-		</p>
+		</div><br/>
+		
+		<div class="container" style="margin: auto; width: 1200;">
+			<div class="header" id="chartheader"><span>Session Scores</span></div>
+			<div class="content" id="chartcontent" style="text-align: left;">
+				<canvas id="scorechart" width="1000" height="400"></canvas>
+				<div id="stats" style="display: inline-block; position: absolute; margin-top: 100;">
+				</div>
+			</div>
+		</div><br/>
+		
+		<canvas id="canvas" width="1200" height="560"></canvas><br/><br/>
+
+		<input class="btn" id="control" type="button" value="Start" onClick="toggle()"></input>
+
 		<script type="text/javascript">
 			document.body.style.font = "14px sans-serif";
+			initchart();
 		</script>
 	</body>
 </html>

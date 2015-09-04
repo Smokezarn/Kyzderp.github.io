@@ -2,9 +2,11 @@
 <html>
 	<head>
 		<title>Format to JSON Parser</title>
+		<link rel="stylesheet" type="text/css" href="../formats/format.css"></link>
+		<link rel="stylesheet" type="text/css" href="../formats/inputs.css"></link>
 		<script type="text/javascript" src="FormatToJson.js"></script>
 	</head>
-	<body>
+	<body style="color: #ffffff;" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
 		<h3>Text Format to JSON Text Parser</h3>
 		<p>
 			Input text like how you would normally type it in chat, click Parse and it will generate JSON text that you can use, for example in a command block with /tellraw @a [{text:"Hi!",color:dark_green}]<br/>
@@ -12,9 +14,13 @@
 		</p>
 		<p>
 			Input text:<br/>
-			<textarea id="inputtext" rows="10" cols="160" autofocus>&8[&bAnnouncer&8]&7=&8[&aMrLobaLoba&8] &6Booooombastic!</textarea><br/>
-			<input id="tellraw" type="checkbox">/tellraw @a</input><br/>
-			<input id="submit" type="button" value="Parse" onClick="submitForm()"></input>
+			<textarea id="inputtext" rows="10" cols="160" autofocus>&8[&bAnnouncer&8]&7=&8[&aMrLobaLoba&8] &6Booooombastic!</textarea>
+			<div class="roundCheckbox">
+				<input id="tellraw" type="checkbox"></input>
+				<label for="tellraw"></label>
+			</div>
+			/tellraw @a<br/><br/>
+			<input id="submit" type="button" class="btn" value="Parse" onClick="submitForm()" ></input>
 		</p>
 		<p id="message"><br/></p>
 		<p>

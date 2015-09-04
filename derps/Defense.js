@@ -9,7 +9,25 @@ var FLOORLEVEL;
 
 var running = false;
 var score = 0;
+var numGames = 0;
 var gameover = false;
+
+var autopause = true;
+var autoresume = false;
+var frombutton = true;
+
+var chartctx;
+var scorechart;
+var data;
+
+var best = Number.NEGATIVE_INFINITY;
+var worst = Number.POSITIVE_INFINITY;
+var average = 0;
+var timeplayed = 0;
+var gameTime = 0;
+
+var chartvisible = false;
+var displayStats = "Best: -<br/>Worst: -<br/>Average: -<br/>Games: 0<br/>Time Played: 00:00:00<br/>";
 
 var main = function()
 {
@@ -51,14 +69,24 @@ var main = function()
 	{
 		$header = $(this);
 		$content = $header.next();
+		if ($header.attr("id") == "chartheader")
+		{
+			chartvisible = false;
+			document.getElementById("stats").innerHTML = "";
+		}
 		$content.slideToggle(500, function()
 		{
-			// Do something
+			if ($header.attr("id") == "chartheader" && $content.is(":visible"))
+			{
+				showchart();
+				chartvisible = true;
+				document.getElementById("stats").innerHTML = displayStats;
+			}
 		});
 	});
 		
 	guns.push(new Gun(canvas.width/2, FLOORLEVEL/2, 30));	
-	update();
+	update(true);
 	
 	setTimeout(callback, INTERVAL-1);
 }
@@ -70,7 +98,7 @@ function callback()
 	setTimeout(callback, INTERVAL-1);
 }
 
-function update()
+function update(firstTime)
 {
 	var ctx = getContext();
 	ctx.fillStyle = "rgb(150,150,150)";
@@ -124,10 +152,22 @@ function update()
 		ctx.fillText("GAME OVER", (canvas.width - ctx.measureText("GAME OVER").width)/2, FLOORLEVEL/2);
 		ctx.font = "bold 16px Arial,sans-serif";
 		ctx.fillText("SCORE: " + score, (canvas.width - ctx.measureText("SCORE: " + score).width)/2, FLOORLEVEL/2 + 20);
-
 	}
-	
-
+	else if (!running && !firstTime)
+	{
+		ctx.font = "bold 30px Arial,sans-serif";
+		ctx.fillText("PAUSED", (canvas.width - ctx.measureText("PAUSED").width)/2, FLOORLEVEL/2);
+	}
+	if (chartvisible)
+	{
+		if (best == Number.NEGATIVE_INFINITY)
+			displayStats = "Best: -<br/>Worst: -<br/>Average: -<br/>Games: 0<br/>Time Played: " + (("" + Math.floor((timeplayed + gameTime)/1000)).toHHMMSS()) + "<br/>";
+		else
+			displayStats = "Best: " + best + "<br/>Worst: " + worst + "<br/>Average: " + average + "<br/>Games: " + numGames + "<br/>Time Played: " + (("" + Math.floor((timeplayed + gameTime)/1000)).toHHMMSS()) + "<br/>";
+		document.getElementById("stats").innerHTML = displayStats;
+	}
+	else
+		document.getElementById("stats").innerHTML = "";
 	ctx.font = "14px sans-serif";
 }
 
@@ -135,6 +175,11 @@ function collisionCheck()
 {
 	if (running)
 	{
+		if (!document.hasFocus() && autopause)
+		{
+			frombutton = false;
+			stop();
+		}
 		for (var i in things)
 		{
 			var thing = things[i];
@@ -218,7 +263,16 @@ function collisionCheck()
 			enemies.push(new Enemy(30, FLOORLEVEL - 30, "200,100,200", 30));
 		
 		score += INTERVAL;
-		update();
+		gameTime += INTERVAL;
+		update(false);
+	}
+	else
+	{
+		if (document.hasFocus() && autoresume && !frombutton && !gameover)
+		{
+			frombutton = false;
+			start();
+		}
 	}
 }
 
@@ -277,9 +331,22 @@ function getContext()
 
 var game = function()
 {
+	timeplayed += gameTime;
+	gameTime = 0;
 	gameover = true;
 	running = false;
+	fromButton = true;
 	document.getElementById("control").value = "Try Again";
+
+	if (score > best)
+		best = score;
+	if (score < worst)
+		worst = score;
+	average = (average * numGames + score) / (numGames + 1);
+	
+	numGames++;
+	addScore("Game " + numGames, score);
+	displayStats = "Best: " + best + "<br/>Worst: " + worst + "<br/>Average: " + average + "<br/>Games: " + numGames + "<br/>Time Played: " + (("" + Math.floor((timeplayed + gameTime)/1000)).toHHMMSS()) + "<br/>";
 }
 
 //////////////////
@@ -419,6 +486,7 @@ var stop = function()
 {
 	running = false;
 	document.getElementById("control").value = "Resume";
+	update();
 };
 
 var start = function()
@@ -438,10 +506,30 @@ var start = function()
 
 var toggle = function()
 {
+	frombutton = true;
 	if (running)
 		stop();
 	else
 		start();
+};
+
+var focusOptions = function()
+{
+	autopause = document.getElementById("autopause").checked;
+	autoresume = document.getElementById("autoresume").checked;
+};
+
+String.prototype.toHHMMSS = function () {
+    var sec_num = parseInt(this, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    var time    = hours+':'+minutes+':'+seconds;
+    return time;
 }
 
 
@@ -450,4 +538,53 @@ function changeFPS()
 {
 	INTERVAL = parseInt(document.getElementById("fps").value);
 	document.getElementById("fpsdisplay").innerHTML = INTERVAL + "ms (~" + Math.floor(1000/INTERVAL) + " fps)";
+}
+
+//// CHART ////
+function initchart()
+{
+	data = {
+		labels: [],
+		datasets: [
+			{
+				label: "Scores",
+				fillColor: "rgba(220,220,220,0.2)",
+				strokeColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(50,100,0,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(220,220,220,1)",
+				data: []
+			}
+		]
+	};
+
+	chartctx = document.getElementById("scorechart").getContext("2d");	
+	showchart();
+}
+
+function showchart()
+{
+	var canvas = document.getElementById("scorechart");
+	canvas.height = 500;
+	canvas.width = 1000;
+	if (data.labels.length == 0)
+	{
+		chartctx.fillStyle = "rgb(255,255,255)";
+		chartctx.font = "14px sans-serif";
+		chartctx.fillText("Start playing to see your scores!", 10, 30);
+	}
+	else
+	{
+		if (typeof scorechart !== "undefined")
+			scorechart.destroy();
+		scorechart = new Chart(chartctx).Line(data, {bezierCurve: false, scaleFontColor: "#FFF", scaleLineColor: "rgba(200,200,200,1)"});
+	}
+}
+
+function addScore(label, score)
+{
+	data.labels.push(label);
+	data.datasets[0].data.push(score);
+	showchart();
 }

@@ -1,0 +1,125 @@
+/* Slider */
+input[type=range] {
+  -webkit-appearance: none;
+  margin: 18px 0;
+  width: 500;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 500;
+  height: 8px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: #4e9942;
+}
+input[type=range]::-webkit-slider-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 2px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -4px;
+}
+
+input[type=range]::-moz-range-track {
+  width: 500;
+  height: 8px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: #4e9942;
+}
+input[type=range]::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 2px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -4px;
+}
+
+
+/* Rounded checkbox */
+input[type="checkbox"] {
+	display: none;
+}
+
+.roundCheckbox
+{
+	
+	width: 14px;
+	height: 14px;
+	background: #ddd;
+	display: inline-block;
+	border-radius: 100%;
+	position: relative;
+	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+	box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+}
+
+.roundCheckbox label {
+	display: block;
+	width: 10px;
+	height: 10px;
+	border-radius: 100%;
+
+	-webkit-transition: all .5s ease;
+	-moz-transition: all .5s ease;
+	-o-transition: all .5s ease;
+	-ms-transition: all .5s ease;
+	transition: all .5s ease;
+	cursor: pointer;
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	z-index: 1;
+
+	background: #333;
+
+	-webkit-box-shadow:inset 0px 1px 3px rgba(0,0,0,0.5);
+	-moz-box-shadow:inset 0px 1px 3px rgba(0,0,0,0.5);
+	box-shadow:inset 0px 1px 3px rgba(0,0,0,0.5);
+}
+
+.roundCheckbox input[type=checkbox]:checked + label {
+	background: #26ca28;
+}
+
+
+/* Standard button */
+.btn 
+{
+	cursor: pointer;
+	background: #4e9942;
+	background-image: -webkit-linear-gradient(top, #4e9942, #345237);
+	background-image: -moz-linear-gradient(top, #4e9942, #345237);
+	background-image: -ms-linear-gradient(top, #4e9942, #345237);
+	background-image: -o-linear-gradient(top, #4e9942, #345237);
+	background-image: linear-gradient(to bottom, #4e9942, #345237);
+	-webkit-border-radius: 6;
+	-moz-border-radius: 6;
+	border-radius: 6px;
+	font-family: Arial;
+	font-weight: bold;
+	color: #ffffff;
+	font-size: 14px;
+	padding: 10px;
+	text-decoration: none;
+	border: none;
+	width: 200;
+}
+
+.btn:hover 
+{
+  background: #2bb346;
+  background-image: -webkit-linear-gradient(top, #2bb346, #207d33);
+  background-image: -moz-linear-gradient(top, #2bb346, #207d33);
+  background-image: -ms-linear-gradient(top, #2bb346, #207d33);
+  background-image: -o-linear-gradient(top, #2bb346, #207d33);
+  background-image: linear-gradient(to bottom, #2bb346, #207d33);
+  text-decoration: none;
+}
