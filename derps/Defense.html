@@ -1,45 +1,45 @@
 <html>
 	<head>
-		<title>Blob Defender</title>
-		<script type="text/javascript" src="../jquery.js"></script>
-		<script type="text/javascript" src="Chart/Chart.js"></script>
+		<title>Kyzderp BallDefence</title>
+		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="Defense.js"></script>
-		<link rel="stylesheet" type="text/css" href="../formats/format.css">
-		<link rel="stylesheet" type="text/css" href="../formats/inputs.css">
+		<link rel="stylesheet" type="text/css" href="format.css">
 	</head>
-	
-	<body onLoad="main()" style="text-align: center;">
-		<div class="container" style="margin: auto; width: 1200;">
-			<div class="header"><span>How to Play</span></div>
-			<div class="content">
+		<body onLoad="main()">
 			<p>
-				<b>Controls</b><br/>
-				Click on the rim of the gray circle to shoot "bullets". The further away from the center of circle, the greater the velocity. It takes 300 milliseconds to reload. Bullets fade over time.<br/>
-				Use the buttons below to start/pause.
-			</p>
-			<p>
-				<b>Objective</b><br/>
-				Survive as long as you can without letting enemy balls hit you. Difficulty increases exponentially as time progresses!
-			</p>
-			<p>
-				<b>Score Calculation</b><br/>
-				You gain 1000 points for every second you survive. Firing a bullet costs 1000 points. New enemies are added at 30k, 60k, and 90k points.
-			</p>
-			</div>
-		</div>
+			<div class="container">
+				<div class="header"><span><b><font color="jade">][:</font> <font color="aqua""><i>Welcome! To Kyzderp's - Ball Defence!</i></font> <font color="jade">:][</font></b></span></div>
+				<div class="content">
+				Mini game by Kyzderp :D <b>][: <i><a href="http://kyzderp.github.io/"><i>Kyzderp's Derps!</i></a></i> :][</b>
 		<br/>
-		
-		<div class="container" style="margin: auto; width: 1200;">
-			<div class="header"><span>Settings</span></div>
+				Click Below to see how to Play!
+				</div>
+			</div>
+		<br/>
+			</p>
+			<div class="container">
+				<div class="header"><span><font color="jade">][</font> <font color="aqua">How to Play</font> <font color="jade">][</font></span></div>
+				<div class="content">
+					<b><font color="Jade">][ <font color="aqua"><i>Controls</i></font> ][:</b><br/> <font color="aqua">Click on the rim of the gray circle to shoot</font> "<font color="aqua">bullets</font>". <font color="aqua">The further away from the center of circle</font>, <font color="aqua">the greater the velocity</font>. <font color="aqua">It takes 300 milliseconds to reload</font>. <font color="aqua">Bullets fade over time</font>.<br/>
+				<font color="aqua">Use the buttons below to start</font>/<font color="aqua">pause</font>.
+				<br/>
+					<b>][ <i><font color="aqua">Objective</i></font> ][:</b><br/> <font color="aqua">Survive as long as you can without letting enemy balls hit you</font>. <font color="aqua">Difficulty increases exponentially as time progresses</font>!
+				<br/>
+					<b>][ <i><font color="aqua">Score calculation</i></font> ][:</b><br/> <font color="aqua">You gain 1000 points for every second you survive</font>. <font color="aqua">Firing a bullet costs 1000 points</font>. <font color="aqua">New enemies are added at 30k</font>, <font color="aqua">60k</font>, <font color="aqua">and 90k points</font>.</font>
+				</div>
+			</div>
+		<br/>
+		<div class="container">
+			<div class="header"><span><font color="jade">][</font> <font color="aqua">Settings</font> <font color="jade">][</font></span></div>
 			<div class="content">
 				<p>
-					<b>Frame Interval</b><br/>
-					The lower the frame interval (higher FPS), the more accurate the collisions. However, too low may slow down the game with too many calculations.<br/>
-					<input id="fps" type="range" min="5" max="100" step="1" value="25" onChange="changeFPS()"></input><br/>
-					<span id="fpsdisplay">25ms (~40 fps)</span>
+					<b><font color="jade">][ <i><font color="aqua">Frame Interval</font></i> ][</b><br/>
+					<font color="aqua">The lower the frame interval</font> (<font color="aqua">higher FPS</font>), <font color="aqua">the more accurate the collisions</font>. <font color="aqua">However</font>, <font color="aqua">too low may slow down the game with too many calculations</font>.<br/>
+						<input id="fps" type="range" min="5" max="100" step="1" value="25" onChange="changeFPS()"></input><br/>
+					<b id="fpsdisplay"><font color="aqua">25ms</font> (~<font color="aqua">40 fps</font>)</b></font>
 				</p>
-				<br/>				
-				<p>
+		<br/>
+		<p>
 					<b>Window Focus</b>
 					<div style="text-align: left; width: 350; margin: auto;">
 						<div class="roundCheckbox">
@@ -55,24 +55,47 @@
 					</div>
 				</p>
 			</div>
-		</div><br/>
-		
-		<div class="container" style="margin: auto; width: 1200;">
-			<div class="header" id="chartheader"><span>Session Scores</span></div>
-			<div class="content" id="chartcontent" style="text-align: left;">
-				<canvas id="scorechart" width="1000" height="400"></canvas>
-				<div id="stats" style="display: inline-block; position: absolute; margin-top: 100;">
+		</div>
+		<br/>
+			<div class="container" style="margin: auto; width: 1200;">
+				<div class="header" id="chartheader"><span>Session Scores</span></div>
+				<div class="content" id="chartcontent" style="text-align: left;">
+					<canvas id="scorechart" width="1000" height="400"></canvas>
+					<div id="stats" style="display: inline-block; position: absolute; margin-top: 100;">
+					</div>
 				</div>
 			</div>
-		</div><br/>
-		
-		<canvas id="canvas" width="1200" height="560"></canvas><br/><br/>
-
-		<input class="btn" id="control" type="button" value="Start" onClick="toggle()"></input>
-
-		<script type="text/javascript">
-			document.body.style.font = "14px sans-serif";
-			initchart();
-		</script>
-	</body>
+		<br>
+				<center>
+			<p>
+				<input class="btn" id="control" type="button" value="Start" onClick="toggle()"></input>
+			</p>
+			<script type="text/javascript">
+				document.body.style.font = "14px sans-serif";
+			</script>
+					<canvas id="canvas" width="1200" height="560"></canvas>
+				</center>
+		<br/>
+			<center>
+				<TR>
+					<TD VALIGN=TOP><b><font color="jade">:][ <font color="aqua"><i>Keep a List of all your Scores!</i></font> ][:</font></b></TD>
+					<br>
+					<TD>
+						<TEXTAREA ROWS=7 COLS=50 NAME=Score_list WRAP=VIRTUAL></TEXTAREA>
+					</TD>
+				</TR>
+			</center>
+		<br/>
+		<br/>
+			<div class="container">
+				<div class="header"><span><font color="jade">][ <font color="aqua">Author</font> ][</font> <font color="aqua">~</font></span></div>
+				<div class="content">
+				<b><font color="jade">][ <font color="aqua"><i>Coding by</i></font> ][:</b> <font color="aqua">Kyzeragon</font> (<font color="aqua">Kyzderp</font>)<font>
+			<br/>
+				}-
+			<br/>
+				<b><font color="jade">][:</b> <font color="aqua"><i>Html Layout Edited For Organization</font>- <font color="aqua">No Change to Game Code</font>. (<font color="aqua">Offline Version Only</font>!) -<font color="aqua">Smokezarn</font></font></i></font> 
+				</div>
+			</div>
+		</body>
 </html>
