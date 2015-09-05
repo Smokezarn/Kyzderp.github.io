@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Mini MC Box</title>
+		<link rel="stylesheet" type="text/css" href="../formats/format.css"></link>
+		<link rel="stylesheet" type="text/css" href="../formats/inputs.css"></link>
+		<script type="text/javascript" src="../jquery.js"></script>
+		<script type="text/javascript" src="McBox.js"></script>
+		</head>
+	<body style="color: #ffffff;" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF" onLoad="main()">
+		<p>
+			Enter any premium Minecraft username <input type="text" value="Kyzeragon" id="name" autofocus></input>
+			<input id="submit" type="button" class="btn" value="Go!" onClick="submitForm()" style="padding:5px 10px"></input>
+		</p>
+		<p>
+			Click and drag, release to throw. Enter more names for more.
+		</p>
+		<br/>
+		<canvas id="canvas" width="1000" height="500"></canvas><br/>
+		<p>
+			For some reason, some of the skin files (like Notch) have black filling in the part that's supposed to be transparent so some heads become black. Probably can't be helped.<br/>
+			More derpy features to come.
+		</p>
+	</body>
+	<script type="text/javascript">
+		document.body.style.font = "14px sans-serif";
+	</script>
+</html>
