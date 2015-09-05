@@ -1,24 +1,31 @@
 <html>
 	<head>
-		<title>Balls</title>
+		<title>Ball Physics!</title>
 		<script type="text/javascript" src="Box.js"></script>
-		<style type="text/css">canvas { border: 1px solid black; }</style>
+		<style type="text/css">canvas { border: 2px solid black; }</style>
 	</head>
-	<body onLoad="main()">
-		<p>
-			Double-click to add a ball, drag and release to throw.<br/>
-			Click on rim of large gray circle to shoot "bullets," the further away from center of circle the greater the velocity.
-		</p>
-		<canvas id="canvas" width="1200" height="560"></canvas>
-		<p>
-			<input type="checkbox" id="gravity" checked=1 onChange="gravity()">Gravity</input>
-		</p>
-		<p>
-			<input type="button" value="Chaos!" onClick="chaos()"></input><br/>
-			<input type="button" value="Clear" onClick="reset()"></input>
-		</p>
-		<script type="text/javascript">
-			document.body.style.font = "14px sans-serif";
-		</script>
-	</body>
+		<body onLoad="main()">
+			<p>
+				][: Welcome to Kyzderp's - Ball Physics! :][<br/>
+				-Double-click to add a colored ball, drag and release one to throw.<br/>
+				-Click on the rim of large gray circle to shoot "bullets," the further away from center of circle the greater the velocity.
+			</p>
+			<p>
+				<center>
+					<input type="button" value="Clear Balls" onClick="reset()"></input>
+					<input type="checkbox" id="gravity" checked=1 onChange="gravity()">Gravity "You know you wanna Play with it..."</input>
+					<input type="button" value="Chaos Mode" onClick="chaos()"></input>
+				</center>
+			</p>
+				<center>
+					<canvas id="canvas" width="1200" height="560"></canvas>
+				</center>
+			<script type="text/javascript">
+				document.body.style.font = "14px sans-serif";
+			</script>
+		<br/>
+			<p>
+				][: Html Layout Edited For Organization- Slight Change to Game Code-. -Smokezarn
+			</p>
+		</body>
 </html>
